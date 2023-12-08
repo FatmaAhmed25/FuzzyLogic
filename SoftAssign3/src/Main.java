@@ -64,7 +64,7 @@ public class Main {
                                         if (variable.equals("x"))
                                             break;
 
-                                        f.AddVariables(variable);
+                                        f.addVariables(variable);
                                     }
                                     break;
 
@@ -82,7 +82,7 @@ public class Main {
                                         if (query.equals("x"))
                                             break;
 
-                                        f.AddFuzzySets(name, query);
+                                        f.addFuzzySets(name, query);
                                     }
                                     break;
 
@@ -96,12 +96,12 @@ public class Main {
                                         String query = s.nextLine();
                                         if (query.equals("x"))
                                             break;
-                                        f.AddRules(query);
+                                        f.addRules(query);
                                     }
                                     break;
 
                                 case 4:
-                                    if (rules.isEmpty() || variables.get(0).fuzzy_sets.isEmpty())
+                                    if (rules.isEmpty() || variables.get(0).fuzzySets.isEmpty())
                                         System.out.println("CAN’T START THE SIMULATION! Please add the fuzzy sets and rules first.");
                                     else {
                                         System.out.println();
@@ -123,13 +123,13 @@ public class Main {
 
                                         for (int i = 0; i < variables.size(); i++) {
                                             if (variables.get(i).type.equals("IN"))
-                                                f.Fuzzification(variables.get(i));
+                                                f.fuzzification(variables.get(i));
                                         }
 
                                         System.out.println("Fuzzification => done");
 
                                         for (int i = 0; i < rules.size(); i++) {
-                                            f.Inference(rules.get(i));
+                                            f.inference(rules.get(i));
                                         }
 
                                         System.out.println("Inference => done");
@@ -139,7 +139,7 @@ public class Main {
                                         System.out.println();
 
                                         try {
-                                            f.Defuzzification();
+                                            f.defuzzification();
                                         } catch (IOException e) {
                                             e.printStackTrace();
                                         }

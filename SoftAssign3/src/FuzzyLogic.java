@@ -1,6 +1,5 @@
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 public class FuzzyLogic {
 
@@ -16,7 +15,7 @@ public class FuzzyLogic {
         this.system_description=system_description;
         this.variables=variables;
     }
-    public void AddVariables(String var)
+    public void addVariables(String var)
     {
         System.out.println(var);
         //var IN [0,100]
@@ -86,155 +85,155 @@ public class FuzzyLogic {
 
         variables.add(v);
     }
-    public  void AddFuzzySets(String varName,String set)
+    public  void addFuzzySets(String varName, String fuzzySet)
     {
         System.out.println(varName);
-        int ind = -1;
+        int vIndex = -1; //if it remains -1 after the loop that means there is no variable with this name
 
-        for (int i = 0; i < variables.size(); i++)
+        for (int i = 0; i < variables.size(); i++) //to get the variable with varName
         {
             if (variables.get(i).name.equals(varName))
             {
-                ind = i;
+                vIndex = i;
             }
         }
 
-        String word = "";
+        String current = "";
         char c;
-        int index = 0;
+        int currentIndex = 0;
         FuzzySet fuzzy = new FuzzySet();
 
-        for (int i = 0; i < set.length(); i++)
+        for (int i = 0; i < fuzzySet.length(); i++) //to get the fuzzy set name
         {
-            c = set.charAt(i);
+            c = fuzzySet.charAt(i);
             if (c == ' ' || c == '\t')
             {
                 break;
             }
 
-            word += c;
-            index++;
+            current += c;
+            currentIndex++;
         }
 
-        fuzzy.name = word;
-        word = "";
+        fuzzy.name = current;
+        current = "";
 
-        while (set.charAt(index) == ' ' || set.charAt(index) == '\t')
+        while (fuzzySet.charAt(currentIndex) == ' ' || fuzzySet.charAt(currentIndex) == '\t') //skips spaces\newlines
         {
-            index++;
+            currentIndex++;
         }
 
-        for (int i = index; i < set.length(); i++)
+        for (int i = currentIndex; i < fuzzySet.length(); i++) //to get the type(TRI/TRAP)
         {
-            c = set.charAt(i);
+            c = fuzzySet.charAt(i);
             if (c == ' ' || c == '\t')
             {
                 break;
             }
 
-            word += c;
-            index++;
+            current += c;
+            currentIndex++;
         }
 
-        fuzzy.type = word;
-        word = "";
+        fuzzy.type = current;
+        current = "";
 
-        while (set.charAt(index) == ' ' || set.charAt(index) == '\t')
+        while (fuzzySet.charAt(currentIndex) == ' ' || fuzzySet.charAt(currentIndex) == '\t')
         {
-            index++;
+            currentIndex++;
         }
 
-        for (int i = index; i < set.length(); i++)
+        for (int i = currentIndex; i < fuzzySet.length(); i++) //to get the values
         {
-            c = set.charAt(i);
-            word += c;
-            index++;
+            c = fuzzySet.charAt(i);
+            current += c;
+            currentIndex++;
         }
 
-        String[] points = word.split(" ");
+        String[] points = current.split(" ");
         fuzzy.a = Integer.parseInt(points[0]);
         fuzzy.b = Integer.parseInt(points[1]);
         fuzzy.c = Integer.parseInt(points[2]);
 
-        if (fuzzy.type.equals("TRAP"))
+        if (fuzzy.type.equals("TRAP")) //if type is TRAP then it will take a forth point
             fuzzy.d = Integer.parseInt(points[3]);
 
-        variables.get(ind).fuzzy_sets.add(fuzzy);
-        }
-
-
-    public void AddRules(String query)
-    {
-        System.out.println(query);
-        rules.add(query);
+        variables.get(vIndex).fuzzySets.add(fuzzy);
     }
 
-    public void Fuzzification(Variable variable)
+
+    public void addRules(String rule)
     {
-        for (int i = 0; i < variable.fuzzy_sets.size(); i++)
+        System.out.println(rule);
+        rules.add(rule);
+    }
+
+    public void fuzzification(Variable variable)
+    {
+        for (int i = 0; i < variable.fuzzySets.size(); i++)
         {
 
             Point p1 = new Point();
             Point p2 = new Point();
 
-            if ((variable.crisp_value >= variable.fuzzy_sets.get(i).a) && (variable.crisp_value <= variable.fuzzy_sets.get(i).c))
+            if ((variable.crisp_value >= variable.fuzzySets.get(i).a) && (variable.crisp_value <= variable.fuzzySets.get(i).c))
             {
-                if ((variable.crisp_value >= variable.fuzzy_sets.get(i).a) && (variable.crisp_value <= variable.fuzzy_sets.get(i).b))
+                if ((variable.crisp_value >= variable.fuzzySets.get(i).a) && (variable.crisp_value <= variable.fuzzySets.get(i).b))
                 {
-                    p1.x = variable.fuzzy_sets.get(i).a;
+                    p1.x = variable.fuzzySets.get(i).a;
                     p1.y = 0;
 
-                    p2.x = variable.fuzzy_sets.get(i).b;
+                    p2.x = variable.fuzzySets.get(i).b;
                     p2.y = 1;
                 }
 
                 else
                 {
-                    if (variable.fuzzy_sets.get(i).type.equals("TRI"))
+                    if (variable.fuzzySets.get(i).type.equals("TRI"))
                     {
-                        p1.x = variable.fuzzy_sets.get(i).b;
+                        p1.x = variable.fuzzySets.get(i).b;
                         p1.y = 1;
 
-                        p2.x = variable.fuzzy_sets.get(i).c;
+                        p2.x = variable.fuzzySets.get(i).c;
                         p2.y = 0;
                     }
 
                     else
                     {
-                        p1.x = variable.fuzzy_sets.get(i).b;
+                        p1.x = variable.fuzzySets.get(i).b;
                         p1.y = 1;
 
-                        p2.x = variable.fuzzy_sets.get(i).c;
+                        p2.x = variable.fuzzySets.get(i).c;
                         p2.y = 1;
                     }
                 }
 
                 double m = (p2.y - p1.y)/(p2.x - p1.x);
                 double c = p1.y - (m * p1.x);
-                variable.fuzzy_sets.get(i).degree = (variable.crisp_value * m) + c;
+                variable.fuzzySets.get(i).degree = (variable.crisp_value * m) + c;
             }
 
-            else if ((variable.fuzzy_sets.get(i).type.equals("TRAP")) && (variable.crisp_value >= variable.fuzzy_sets.get(i).c) && (variable.crisp_value <= variable.fuzzy_sets.get(i).d))
+            else if ((variable.fuzzySets.get(i).type.equals("TRAP")) && (variable.crisp_value >= variable.fuzzySets.get(i).c) && (variable.crisp_value <= variable.fuzzySets.get(i).d))
             {
-                p1.x = variable.fuzzy_sets.get(i).c;
+                p1.x = variable.fuzzySets.get(i).c;
                 p1.y = 1;
 
-                p2.x = variable.fuzzy_sets.get(i).d;
+                p2.x = variable.fuzzySets.get(i).d;
                 p2.y = 0;
 
                 double m = (p2.y - p1.y)/(p2.x - p1.x);
                 double c = p1.y - (m * p1.x);
-                variable.fuzzy_sets.get(i).degree = (variable.crisp_value * m) + c;
+                variable.fuzzySets.get(i).degree = (variable.crisp_value * m) + c;
             }
 
             else
             {
-                variable.fuzzy_sets.get(i).degree = 0;
+                variable.fuzzySets.get(i).degree = 0;
             }
         }
     }
 
-    public void Inference(String rule)
+    public void inference(String rule)
     {
         int index = -1;
         int ind = -1;
@@ -262,11 +261,11 @@ public class FuzzyLogic {
         {
             if (variables.get(j).name.equals(words[i]))
             {
-                for (int k = 0; k < variables.get(j).fuzzy_sets.size(); k++)
+                for (int k = 0; k < variables.get(j).fuzzySets.size(); k++)
                 {
-                    if (variables.get(j).fuzzy_sets.get(k).name.equals(words[i+1]))
+                    if (variables.get(j).fuzzySets.get(k).name.equals(words[i+1]))
                     {
-                        val1 = variables.get(j).fuzzy_sets.get(k).degree;
+                        val1 = variables.get(j).fuzzySets.get(k).degree;
                         if (nott)
                             val1 = 1 - val1;
                         break;
@@ -303,11 +302,11 @@ public class FuzzyLogic {
         {
             if (variables.get(j).name.equals(words[i]))
             {
-                for (int k = 0; k < variables.get(j).fuzzy_sets.size(); k++)
+                for (int k = 0; k < variables.get(j).fuzzySets.size(); k++)
                 {
-                    if (variables.get(j).fuzzy_sets.get(k).name.equals(words[i+1]))
+                    if (variables.get(j).fuzzySets.get(k).name.equals(words[i+1]))
                     {
-                        val2 = variables.get(j).fuzzy_sets.get(k).degree;
+                        val2 = variables.get(j).fuzzySets.get(k).degree;
                         if (nott)
                             val2 = 1 - val2;
                         break;
@@ -324,9 +323,9 @@ public class FuzzyLogic {
             if (variables.get(j).name.equals(words[i]))
             {
                 index = j;
-                for (int k = 0; k < variables.get(j).fuzzy_sets.size(); k++)
+                for (int k = 0; k < variables.get(j).fuzzySets.size(); k++)
                 {
-                    if (variables.get(j).fuzzy_sets.get(k).name.equals(words[i+1]))
+                    if (variables.get(j).fuzzySets.get(k).name.equals(words[i+1]))
                     {
                         ind = k;
                     }
@@ -344,12 +343,12 @@ public class FuzzyLogic {
             val3 = Math.max(val1,val2);
         }
 
-        if (variables.get(index).fuzzy_sets.get(ind).degree < val3)
-            variables.get(index).fuzzy_sets.get(ind).degree = val3;
+        if (variables.get(index).fuzzySets.get(ind).degree < val3)
+            variables.get(index).fuzzySets.get(ind).degree = val3;
 
     }
 
-    public void Defuzzification() throws IOException {
+    public void defuzzification() throws IOException {
         double numerator = 0;
         double denominator = 0;
 
@@ -357,29 +356,29 @@ public class FuzzyLogic {
         {
             if (variables.get(i).type.equals("OUT"))
             {
-                for (int j = 0; j < variables.get(i).fuzzy_sets.size(); j++)
+                for (int j = 0; j < variables.get(i).fuzzySets.size(); j++)
                 {
                     double centroid;
-                    if (variables.get(i).fuzzy_sets.get(j).type.equals("TRI"))
-                        centroid = (variables.get(i).fuzzy_sets.get(j).a + variables.get(i).fuzzy_sets.get(j).b + variables.get(i).fuzzy_sets.get(j).c)/3.0;
+                    if (variables.get(i).fuzzySets.get(j).type.equals("TRI"))
+                        centroid = (variables.get(i).fuzzySets.get(j).a + variables.get(i).fuzzySets.get(j).b + variables.get(i).fuzzySets.get(j).c)/3.0;
                     else
-                        centroid = (variables.get(i).fuzzy_sets.get(j).b + variables.get(i).fuzzy_sets.get(j).c)/2.0;
-                    numerator += (variables.get(i).fuzzy_sets.get(j).degree) * centroid;
-                    denominator += variables.get(i).fuzzy_sets.get(j).degree;
+                        centroid = (variables.get(i).fuzzySets.get(j).b + variables.get(i).fuzzySets.get(j).c)/2.0;
+                    numerator += (variables.get(i).fuzzySets.get(j).degree) * centroid;
+                    denominator += variables.get(i).fuzzySets.get(j).degree;
                 }
                 variables.get(i).crisp_value = numerator / denominator;
                 variables.get(i).crisp_value = Math.round(100 * variables.get(i).crisp_value) / 100.0;
-                Fuzzification(variables.get(i));
+                fuzzification(variables.get(i));
                 double max = -1;
                 int index = -1;
 
-                for (int j = 0; j < variables.get(i).fuzzy_sets.size(); j++) {
-                    if (variables.get(i).fuzzy_sets.get(j).degree >= max) {
-                        max = variables.get(i).fuzzy_sets.get(j).degree;
+                for (int j = 0; j < variables.get(i).fuzzySets.size(); j++) {
+                    if (variables.get(i).fuzzySets.get(j).degree >= max) {
+                        max = variables.get(i).fuzzySets.get(j).degree;
                         index = j;
                     }
                 }
-                System.out.println("The predicted " + variables.get(i).name + " is " + variables.get(i).fuzzy_sets.get(index).name +  " (" + variables.get(i).crisp_value + ")");
+                System.out.println("The predicted " + variables.get(i).name + " is " + variables.get(i).fuzzySets.get(index).name +  " (" + variables.get(i).crisp_value + ")");
             }
         }
     }

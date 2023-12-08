@@ -7,5 +7,5 @@ class Variable
     int upperBound;
     int lowerBound;
     double crisp_value;
-    ArrayList<FuzzySet> fuzzy_sets = new ArrayList<>();
+    ArrayList<FuzzySet> fuzzySets = new ArrayList<>();
 }
