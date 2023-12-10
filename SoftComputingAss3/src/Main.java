@@ -28,9 +28,7 @@ public class Main {
                     System.out.println("Enter the system’s name and a brief description:");
                     System.out.println("------------------------------------------------");
                     systemName = s.nextLine();
-                    System.out.println(systemName);
                     systemDescription = s.nextLine();
-                    System.out.println(systemDescription);
                     f = new FuzzyLogic(rules, variables, systemName, systemDescription);
 
                     while (true) {
@@ -41,12 +39,16 @@ public class Main {
                         System.out.println("2- Add fuzzy sets to an existing variable.");
                         System.out.println("3- Add rules.");
                         System.out.println("4- Run the simulation on crisp values.");
+                        System.out.println("5- Type 'Close' to exit.");
 
                         String action = s.nextLine();
                         System.out.println(action);
 
-                        if (action.equalsIgnoreCase("Close"))
+                        if (action.equalsIgnoreCase("Close")) {
+                            rules.clear();
+                            variables.clear();
                             break;
+                        }
                         else
                         {
                             int choice = Integer.parseInt(action);
@@ -112,8 +114,8 @@ public class Main {
                                         {
                                             if (variables.get(i).type.equals("IN")) {
                                                 System.out.print(variables.get(i).name + ": ");
-                                                variables.get(i).crisp_value = s.nextInt();
-                                                System.out.print(variables.get(i).crisp_value);
+                                                variables.get(i).crispValue = s.nextInt();
+                                                System.out.print(variables.get(i).crispValue);
                                                 s.nextLine();
                                                 System.out.println();
                                             }

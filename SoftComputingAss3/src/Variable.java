@@ -6,6 +6,6 @@ class Variable
     String type;
     int upperBound;
     int lowerBound;
-    double crisp_value;
+    double crispValue;
     ArrayList<FuzzySet> fuzzySets = new ArrayList<>();
 }
