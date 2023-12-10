@@ -30,7 +30,7 @@ x
 3
 dirt small and fabric soft => time very_small
 dirt medium and fabric ordinary => time standard
-dirt medium and fabric soft => time small
+dirt small and_not fabric soft or dirt medium and fabric soft => time small
 dirt medium and fabric stiff => time large
 dirt large and_not fabric soft => time very_large
 dirt large and fabric soft => time standard

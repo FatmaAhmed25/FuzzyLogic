@@ -7,7 +7,7 @@ import java.util.Scanner;
 public class Main {
 
     public static void main(String[] args) throws FileNotFoundException {
-        Scanner s = new Scanner(new File("lab.txt"));
+        Scanner s = new Scanner(new File("assign.txt"));
         String systemName ="";
         String systemDescription ="";
         ArrayList<Variable> variables = new ArrayList<>();
@@ -146,9 +146,7 @@ public class Main {
                                         }
 
                                         System.out.println("Inference => done");
-
                                         System.out.println("Defuzzification => done");
-
                                         System.out.println();
 
                                         try {

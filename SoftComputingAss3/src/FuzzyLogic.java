@@ -119,45 +119,60 @@ public class FuzzyLogic {
 
 
     public void inference(String rule) {
+        String[] parts = rule.split("=>");
+        String[] conditions = parts[0].split(" or ");
+        String result = parts[1].trim();
+
+        double resultValue = -1;
+
+        for (String condition : conditions) {
+            String[] words = condition.split(" ");
+
+            int i = 0;
+            double firstValue = -1;
+            double secondValue = -1;
+            String operator;
+
+            boolean negationFlag = false;
+//            i += negationFlag ? 1 : 0;
+
+            firstValue = getValue(words, i, negationFlag);
+            i += 2;
+
+            while (i < words.length) {
+                negationFlag = checkNegation(words, i);
+                i += negationFlag ? 1 : 0;
+
+                operator = words[i];
+                if (operator.contains("_not")) {
+                    negationFlag = !negationFlag;
+                    operator = operator.substring(0, operator.length() - 4);
+                }
+                i++;
+
+                secondValue = getValue(words, i, negationFlag);
+                i += 2;
+
+                firstValue = operator.equals("and") ? Math.min(firstValue, secondValue) : Math.max(firstValue, secondValue);
+            }
+
+            resultValue = Math.max(resultValue, firstValue);
+        }
+
+        applyResult(result, resultValue);
+    }
+
+    private void applyResult(String result, double resultValue) {
+        String[] words = result.split(" ");
         int variableIndex = -1;
         int fuzzySetIndex = -1;
-        int i = 0;
-        double firstValue = -1;
-        double secondValue = -1;
-        String operator;
-        double resultValue;
-
-        String[] words = rule.split(" ");
-
-        boolean negationFlag = checkNegation(words, i);
-        i += negationFlag ? 1 : 0;
-
-        firstValue = getValue(words, i, negationFlag);
-        i += 2;
-
-        negationFlag = checkNegation(words, i);
-        i += negationFlag ? 1 : 0;
-
-        operator = words[i];
-        if (operator.contains("_not")) {
-            negationFlag = !negationFlag;
-            operator = operator.substring(0, operator.length() - 4);
-        }
-        i++;
-
-        secondValue = getValue(words, i, negationFlag);
-        i += 3;
-
-        negationFlag = false;
 
         for (int j = 0; j < variables.size(); j++) {
-            if (variables.get(j).name.equals(words[i])) {
+            if (variables.get(j).name.equals(words[0])) {
                 variableIndex = j;
-                fuzzySetIndex = getFuzzySetIndex(variables.get(j), words[i+1]);
+                fuzzySetIndex = getFuzzySetIndex(variables.get(j), words[1]);
             }
         }
-
-        resultValue = operator.equals("and") ? Math.min(firstValue, secondValue) : Math.max(firstValue, secondValue);
 
         if (variables.get(variableIndex).fuzzySets.get(fuzzySetIndex).degree < resultValue)
             variables.get(variableIndex).fuzzySets.get(fuzzySetIndex).degree = resultValue;
@@ -202,37 +217,46 @@ public class FuzzyLogic {
 
 
     public void defuzzification() throws IOException {
-        double numerator = 0;
-        double denominator = 0;
-
-        for (int i = 0; i < variables.size(); i++)
-        {
-            if (variables.get(i).type.equals("OUT"))
-            {
-                for (int j = 0; j < variables.get(i).fuzzySets.size(); j++)
-                {
-                    double centroid;
-                    if (variables.get(i).fuzzySets.get(j).type.equals("TRI"))
-                        centroid = (variables.get(i).fuzzySets.get(j).a + variables.get(i).fuzzySets.get(j).b + variables.get(i).fuzzySets.get(j).c)/3.0;
-                    else
-                        centroid = (variables.get(i).fuzzySets.get(j).b + variables.get(i).fuzzySets.get(j).c)/2.0;
-                    numerator += (variables.get(i).fuzzySets.get(j).degree) * centroid;
-                    denominator += variables.get(i).fuzzySets.get(j).degree;
-                }
-                variables.get(i).crispValue = numerator / denominator;
-                variables.get(i).crispValue = Math.round(100 * variables.get(i).crispValue) / 100.0;
-                fuzzification(variables.get(i));
-                double max = -1;
-                int index = -1;
-
-                for (int j = 0; j < variables.get(i).fuzzySets.size(); j++) {
-                    if (variables.get(i).fuzzySets.get(j).degree >= max) {
-                        max = variables.get(i).fuzzySets.get(j).degree;
-                        index = j;
-                    }
-                }
-                System.out.println("The predicted " + variables.get(i).name + " is " + variables.get(i).fuzzySets.get(index).name +  " (" + variables.get(i).crispValue + ")");
+        for (Variable variable : variables) {
+            if (variable.type.equals("OUT")) {
+                variable.crispValue = calculateCrispValue(variable);
+                fuzzification(variable);
+                printPrediction(variable);
             }
         }
     }
+
+    private double calculateCrispValue(Variable variable) {
+        double numerator = 0;
+        double denominator = 0;
+
+        for (FuzzySet fuzzySet : variable.fuzzySets) {
+            double centroid = calculateCentroid(fuzzySet);
+            numerator += fuzzySet.degree * centroid;
+            denominator += fuzzySet.degree;
+        }
+
+        return Math.round(100 * (numerator / denominator)) / 100.0;
+    }
+
+    private double calculateCentroid(FuzzySet fuzzySet) {
+        return fuzzySet.type.equals("TRI") ?
+                (fuzzySet.a + fuzzySet.b + fuzzySet.c) / 3.0 :
+                (fuzzySet.b + fuzzySet.c) / 2.0;
+    }
+
+    private void printPrediction(Variable variable) {
+        double maxDegree = -1;
+        String predictedFuzzySetName = "";
+
+        for (FuzzySet fuzzySet : variable.fuzzySets) {
+            if (fuzzySet.degree >= maxDegree) {
+                maxDegree = fuzzySet.degree;
+                predictedFuzzySetName = fuzzySet.name;
+            }
+        }
+
+        System.out.println("The predicted " + variable.name + " is " + predictedFuzzySetName + " (" + variable.crispValue + ")");
+    }
+
 }
