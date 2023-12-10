@@ -1,11 +1,13 @@
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
 
-    public static void main(String[] args) {
-        Scanner s = new Scanner(System.in);
+    public static void main(String[] args) throws FileNotFoundException {
+        Scanner s = new Scanner(new File("lab.txt"));
         String systemName ="";
         String systemDescription ="";
         ArrayList<Variable> variables = new ArrayList<>();
@@ -19,8 +21,17 @@ public class Main {
             System.out.println("1- Create a new fuzzy system");
             System.out.println("2- Quit");
 
-            int n = s.nextInt();
-            s.nextLine();
+            int n;
+            try {
+                n = Integer.parseInt(s.nextLine().trim());
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a valid integer.");
+                continue;
+            }
+
+//            int n = s.nextInt();
+//            s.nextLine();
+
 
             switch (n) {
                 case 1:
