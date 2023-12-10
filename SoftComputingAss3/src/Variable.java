@@ -2,10 +2,10 @@ import java.util.ArrayList;
 
 class Variable
 {
-    String name;
-    String type;
-    int upperBound;
-    int lowerBound;
-    double crispValue;
-    ArrayList<FuzzySet> fuzzySets = new ArrayList<>();
+    public String name;
+    public String type;
+    public int upper;
+    public int lower;
+    public double crispValue;
+    public ArrayList<FuzzySet> fuzzySets = new ArrayList<>();
 }

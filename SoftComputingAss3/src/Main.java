@@ -8,6 +8,7 @@ public class Main {
 
     public static void main(String[] args) throws FileNotFoundException {
         Scanner s = new Scanner(new File("assign.txt"));
+//        Scanner s = new Scanner(System.in);
         String systemName ="";
         String systemDescription ="";
         ArrayList<Variable> variables = new ArrayList<>();
@@ -31,7 +32,6 @@ public class Main {
 
 //            int n = s.nextInt();
 //            s.nextLine();
-
 
             switch (n) {
                 case 1:

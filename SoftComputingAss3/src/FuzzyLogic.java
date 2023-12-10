@@ -28,8 +28,8 @@ public class FuzzyLogic {
         if (matcher.matches()) {
             v.name = matcher.group(1);
             v.type = matcher.group(2);
-            v.lowerBound = Integer.parseInt(matcher.group(3));
-            v.upperBound = Integer.parseInt(matcher.group(4));
+            v.lower = Integer.parseInt(matcher.group(3));
+            v.upper = Integer.parseInt(matcher.group(4));
 
             variables.add(v);
         } else {
